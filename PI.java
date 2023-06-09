@@ -179,7 +179,8 @@ public class PI {
             
             personagem.raca.vidaAtual -= calcularDano(10,personagem.classe.defesa);
             
-            System.out.println("Sua vida atual é de: " + personagem.raca.vidaAtual);
+            exibirVidaPersonagem(personagem);
+            
             System.out.println("Você se recompõe e vai em direção a guilda de aventureiros.");
         }
         
@@ -235,10 +236,18 @@ public class PI {
         DragaoClasse dragao = new DragaoClasse();
         
         dragaoAtacar(personagem, dragao);
+        exibirDanoTankado(personagem);
+        exibirVidaPersonagem(personagem);
         
-        while (personagem.raca.vidaAtual > 0 && dragao.vida > 0) {
+        while (personagem.raca.vidaAtual >= 0 && dragao.vida > 0) {
             System.out.println("\n----- Turno do Inimigo -----");
             dragaoAtacar(personagem, dragao);
+            exibirDanoTankado(personagem);
+            exibirVidaPersonagem(personagem);
+            
+            if (personagem.raca.vidaAtual <= 0) {
+                break;
+            }
             
             System.out.println("\n----- Turno do heroí -----");
             System.out.println(personagem.nomePersonagem + ", escolha sua próxima ação:");
@@ -268,9 +277,14 @@ public class PI {
                 System.out.println("Opção inválida. Tente novamente.");
                 continue;
             }
+            try{
+                Thread.sleep(3000);
+            }catch(InterruptedException ex){
+                
+            }
         }
         
-        if (personagem.raca.vidaAtual < 0) {
+        if (personagem.raca.vidaAtual <= 0) {
             System.out.println(personagem.nomePersonagem + " da seu último suspiro antes de cair sem vida aos pés do dragão.");
             System.out.println("Este é o seu fim...");
             return false;
@@ -297,6 +311,30 @@ public class PI {
         return Math.round(danoTomado - dano);
     }
     
+    public static void exibirVidaDragao(DragaoClasse dragao){
+        System.out.println("*******************************************");
+
+        System.out.println("\nA vida atual do dragão é de " + dragao.vida + "\n");
+        
+        System.out.println("*******************************************");
+    }
+    
+    public static void exibirVidaPersonagem(PersonagemModel personagem){
+        System.out.println("###############################################");
+
+        if (personagem.raca.vidaAtual < 0) {
+            System.out.println("\nA sua vida atual é de " + 0 + "\n");
+        } else {
+            System.out.println("\nA sua vida atual é de " + personagem.raca.vidaAtual + "\n");
+        }
+        
+        System.out.println("###############################################");
+    }
+    
+    public static void exibirDanoTankado(PersonagemModel personagem){
+        System.out.println("Sua armadura tanka " + personagem.classe.defesa + "%");
+    }
+    
     public static int dadoSorte()
     {
         Random rand = new Random(); 
@@ -313,6 +351,7 @@ public class PI {
         if (sortePersogagem > 8) {
             System.out.println("O dragão é atingido! - você causa um dano de " + personagem.classe.ataque);
             dragao.vida -= personagem.classe.ataque;
+            exibirVidaDragao(dragao);
         } else {
             System.out.println("Você erra e o míssil destrói um ninho de pássaro, boa mano");
             if (sorteDragao > 10) {
@@ -336,6 +375,7 @@ public class PI {
         if (sortePersogagem > 8) {
             System.out.println("O dragão leva um corte profundo! - você dá um dano de " + personagem.classe.ataque);
             dragao.vida -= personagem.classe.ataque;
+            exibirVidaDragao(dragao);
         } else {
             System.out.println("Você meio que perde o equilíbrio empunhando a espada, é a vez do dragão");
             if (sorteDragao > 10) {
@@ -359,6 +399,7 @@ public class PI {
         if (sortePersogagem > 8) {
             System.out.println("A flecha finca no dragão! - você dá um dano de " + personagem.classe.ataque);
             dragao.vida -= personagem.classe.ataque;
+            exibirVidaDragao(dragao);
         } else {
             System.out.println("A flecha acerta num urso, oops…");
             if (sorteDragao > 10) {
@@ -382,6 +423,7 @@ public class PI {
         if (sortePersogagem > 8) {
             System.out.println("O dragão é perfurado! - você causa um dano de " + personagem.classe.ataque);
             dragao.vida -= personagem.classe.ataque;
+            exibirVidaDragao(dragao);
         } else {
             System.out.println("Você ataca o ar….");
             if (sorteDragao > 10) {
@@ -400,11 +442,11 @@ public class PI {
         if (dadoSorte() > 10) {
             int posicao = retornarPosicaoNoDragao(dragao,new AtaqueGarraDragaoClasse());
             System.out.println("O dragão ergue suas garras e te rasga fazendo você voar e perder " + dragao.ataques.get(posicao).danoAtaque + " de vida.");
-            personagem.raca.vidaAtual -= dragao.ataques.get(posicao).danoAtaque;
+            personagem.raca.vidaAtual -= calcularDano(dragao.ataques.get(posicao).danoAtaque,personagem.classe.defesa);
         } else {
             int posicao = retornarPosicaoNoDragao(dragao,new AtaqueGarraDragaoClasse());
             System.out.println("O dragão enche o pulmão de ar, e solta um bola de fogo em você, fazendo você se queimar e perder " + dragao.ataques.get(posicao).danoAtaque + " de vida.");
-            personagem.raca.vidaAtual -= dragao.ataques.get(posicao).danoAtaque;
+            personagem.raca.vidaAtual -= calcularDano(dragao.ataques.get(posicao).danoAtaque,personagem.classe.defesa);
         }
     }
     
@@ -426,6 +468,10 @@ public class PI {
         }
         
         personagem.itens.remove(posicao);
+        
+        System.out.println("Você curou " + qtdCura + " de sua vida");
+        
+        exibirVidaPersonagem(personagem);
     }
     public static int retornarPosicaoNoDragao(DragaoClasse dragao, Object objeto){
         for (int i = 0; i < dragao.ataques.size(); i++) {
