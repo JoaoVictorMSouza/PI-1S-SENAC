@@ -3,7 +3,7 @@ import java.util.List;
 
 public class ArqueiroClasse extends ClasseBasePersonagemModel {
     public ArqueiroClasse() {
-        super(40, 30, "Arqueiro");
+        super(45, 40, "Arqueiro");
 
         List<String> equipamentos = Arrays.asList("ARCO");
         this.equipamentos = equipamentos;

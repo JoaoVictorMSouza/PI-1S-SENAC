@@ -278,7 +278,7 @@ public class PI {
                 continue;
             }
             try{
-                Thread.sleep(3000);
+                Thread.sleep(4000);
             }catch(InterruptedException ex){
                 
             }
@@ -296,9 +296,9 @@ public class PI {
     }
     
     public static boolean apresentarCena5Final(PersonagemModel personagem){
-
+        System.out.println("\n");
         System.out.println("Parabéns "+ personagem.nomePersonagem +", sua bravura e coragem com certeza não foram em vão, "
-                + "o Rei Jonas ficou muito alegre de saber sobre sua vitória contra monstro e lhe deu um lugar "
+                + "o Rei Jonas ficou muito alegre de saber sobre sua vitória \n contra monstro e lhe deu um lugar "
                 + "em sua guarda real, além de uma grande recompensa em dinheiro.");
         
         return true;
@@ -313,8 +313,12 @@ public class PI {
     
     public static void exibirVidaDragao(DragaoClasse dragao){
         System.out.println("*******************************************");
-
-        System.out.println("\nA vida atual do dragão é de " + dragao.vida + "\n");
+        
+        if (dragao.vida < 0) {
+            System.out.println("\nA vida atual do dragão é de " + 0 + "\n");
+        } else {
+            System.out.println("\nA vida atual do dragão é de " + dragao.vida + "\n");
+        }
         
         System.out.println("*******************************************");
     }
@@ -360,8 +364,11 @@ public class PI {
                 int posicao = retornarPosicaoNoDragao(dragao,new AtaqueFogoDragaoClasse());
 
                 System.out.println("Você sofre um dano de " + dragao.ataques.get(posicao).danoAtaque);
+                exibirDanoTankado(personagem);
                 
-                personagem.raca.vidaAtual -= dragao.ataques.get(posicao).danoAtaque;
+                personagem.raca.vidaAtual -= calcularDano(dragao.ataques.get(posicao).danoAtaque,personagem.classe.defesa);
+                
+                exibirVidaPersonagem(personagem);
             }
         }
     }
@@ -384,8 +391,11 @@ public class PI {
                 int posicao = retornarPosicaoNoDragao(dragao,new AtaqueGarraDragaoClasse());
 
                 System.out.println("Você sofre um dano de " + dragao.ataques.get(posicao).danoAtaque);
+                exibirDanoTankado(personagem);
                 
-                personagem.raca.vidaAtual -= dragao.ataques.get(posicao).danoAtaque;
+                personagem.raca.vidaAtual -= calcularDano(dragao.ataques.get(posicao).danoAtaque,personagem.classe.defesa);
+                
+                exibirVidaPersonagem(personagem);
             }
         }
     }
@@ -396,20 +406,23 @@ public class PI {
         int sortePersogagem = dadoSorte();
         int sorteDragao = dadoSorte();
         
-        if (sortePersogagem > 8) {
+        if (sortePersogagem > 7) {
             System.out.println("A flecha finca no dragão! - você dá um dano de " + personagem.classe.ataque);
             dragao.vida -= personagem.classe.ataque;
             exibirVidaDragao(dragao);
         } else {
             System.out.println("A flecha acerta num urso, oops…");
-            if (sorteDragao > 10) {
+            if (sorteDragao > 11) {
                 System.out.println("O dragão contra ataca, cuspindo fogo e te queima no processo");
                 
                 int posicao = retornarPosicaoNoDragao(dragao,new AtaqueFogoDragaoClasse());
 
                 System.out.println("Você sofre um dano de " + dragao.ataques.get(posicao).danoAtaque);
+                exibirDanoTankado(personagem);
                 
-                personagem.raca.vidaAtual -= dragao.ataques.get(posicao).danoAtaque;
+                personagem.raca.vidaAtual -= calcularDano(dragao.ataques.get(posicao).danoAtaque,personagem.classe.defesa);
+                
+                exibirVidaPersonagem(personagem);
             }
         }
     }
@@ -432,8 +445,11 @@ public class PI {
                 int posicao = retornarPosicaoNoDragao(dragao,new AtaqueGarraDragaoClasse());
 
                 System.out.println("Você sofre um dano de " + dragao.ataques.get(posicao).danoAtaque);
+                exibirDanoTankado(personagem);
                 
-                personagem.raca.vidaAtual -= dragao.ataques.get(posicao).danoAtaque;
+                personagem.raca.vidaAtual -= calcularDano(dragao.ataques.get(posicao).danoAtaque,personagem.classe.defesa);
+                
+                exibirVidaPersonagem(personagem);
             }
         }
     }
@@ -473,6 +489,7 @@ public class PI {
         
         exibirVidaPersonagem(personagem);
     }
+    
     public static int retornarPosicaoNoDragao(DragaoClasse dragao, Object objeto){
         for (int i = 0; i < dragao.ataques.size(); i++) {
             boolean achouPosicao = dragao.ataques.get(i).getClass().equals(objeto.getClass());
